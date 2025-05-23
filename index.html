@@ -1,3 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Promo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1bee7);
+      text-align: center;
+      touch-action: pan-y; /* Allow vertical touch scrolling */
+    }
+
+    .slider {
+      width: 100%;
+      max-width: 380px;
+      margin: 20px auto;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+      width: 100%;
+    }
+
+    .slide {
+      flex: 0 0 100%;
+      position: relative;
+    }
+
+    .slide-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slide img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .app-card {
+      margin: 30px auto;
+      max-width: 350px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border-radius: 10px;
+      padding: 4px 20px;
+      box-shadow: 0 10px 25px rgba(0, 114, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 2px solid #00c6ff;
+      color: white;
+    }
+
+    .app-logo {
+      width: 55px;
+      height: 55px;
+      border-radius: 12px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-name {
+      font-size: 19px;
+      font-weight: 600;
+      flex: 1;
+      text-align: left;
+      padding-left: 10px;
+      color: #ffffff;
+    }
+
+    .install-btn {
+      background: #003cb3; /* गाढ़ा नीला */
+      color: white;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: 0.3s ease;
+    }
+
+    .install-btn:hover {
+      background: #002080; /* और गहरा नीला hover पर */
+    }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ccc;
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dot.active {
+      background: #0072ff;
+    }
+  </style>
+</head>
+<body>
+
+ <!-- Updated slider content -->
+<div class="slider">
+  <div class="slides" id="slides">
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEginSJ4UspxjM15Zp5aJz11QwhFapPGdn1FUV3mZ6S7JFzA0FUwFUIWeGxNnJm_2YzDt445Vw_dPW4-yTcJZnPZSMpaI3FEz6XdWkSsarmhkAlZ2hdi5CCRv0r0DWwdDU9gVmJgEJoYFqfxV078uZ2YJWf6axOSGFPdCrgie2qnfPoVIGAjLlxY1j-bnPDm/s800/IMG-20250418-WA0023.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEginSJ4UspxjM15Zp5aJz11QwhFapPGdn1FUV3mZ6S7JFzA0FUwFUIWeGxNnJm_2YzDt445Vw_dPW4-yTcJZnPZSMpaI3FEz6XdWkSsarmhkAlZ2hdi5CCRv0r0DWwdDU9gVmJgEJoYFqfxV078uZ2YJWf6axOSGFPdCrgie2qnfPoVIGAjLlxY1j-bnPDm/s800/IMG-20250418-WA0023.jpg" alt="Ad 1">
+      </a>
+    </div>
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGsTSHqu83hAbjpREWhNSKkE42YS97crvC9vqC6a_yT1DKF9CA2Ze1bMLwxNpMDbXV6ZRCucf6qh9TORM6f1_tq5a-VRfx3uMDnsx5YNoALK0w7OORi7gte9QsIEuhz2_LqolIlFBm61TddVv3JtHrOUgc1h5Mbq4rwdajIiQR1BwFN8h-Ai5LVR8Sv9KU/s320/%E0%A4%B5%E0%A4%BF%E0%A4%9C%E0%A4%AF%20%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%20%E0%A4%AF%E0%A4%BE%E0%A4%A6%E0%A4%B5_20241230_125918_2.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEginSJ4UspxjM15Zp5aJz11QwhFapPGdn1FUV3mZ6S7JFzA0FUwFUIWeGxNnJm_2YzDt445Vw_dPW4-yTcJZnPZSMpaI3FEz6XdWkSsarmhkAlZ2hdi5CCRv0r0DWwdDU9gVmJgEJoYFqfxV078uZ2YJWf6axOSGFPdCrgie2qnfPoVIGAjLlxY1j-bnPDm/s800/IMG-20250418-WA0023.jpg" alt="Ad 2"> <!-- Replace with actual image URL if needed -->
+      </a>
+    </div>
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s500/IMG-20250410-WA0005.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s500/IMG-20250410-WA0005.jpg" alt="Ad 3">
+      </a>
+    </div>
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s320/IMG-20250410-WA0005.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s320/IMG-20250410-WA0005.jpg" alt="Ad 4">
+      </a>
+    </div>
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgmJAvFgpZM46f2dtilL6Mk5mvpCOy1BqcsH0kcTkKgteQiwnRZl_WvgJHjhWzFp9IPkD8WGp6ZQcQIEPyfoZyzmizXs_PzE34JGdUbOYzQM_aqnJD-3rCjllvpmEehB_dk58vkpE6MdSLX6Zw_QeNz57OsHm3pEC8EltFtCiAZFO-Imkrly6Y9R1SfOz1A/s1080/IMG-20250402-WA0012.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgmJAvFgpZM46f2dtilL6Mk5mvpCOy1BqcsH0kcTkKgteQiwnRZl_WvgJHjhWzFp9IPkD8WGp6ZQcQIEPyfoZyzmizXs_PzE34JGdUbOYzQM_aqnJD-3rCjllvpmEehB_dk58vkpE6MdSLX6Zw_QeNz57OsHm3pEC8EltFtCiAZFO-Imkrly6Y9R1SfOz1A/s1080/IMG-20250402-WA0012.jpg" alt="Ad 5">
+      </a>
+    </div>
+    <div class="slide">
+      <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhGsTSHqu83hAbjpREWhNSKkE42YS97crvC9vqC6a_yT1DKF9CA2Ze1bMLwxNpMDbXV6ZRCucf6qh9TORM6f1_tq5a-VRfx3uMDnsx5YNoALK0w7OORi7gte9QsIEuhz2_LqolIlFBm61TddVv3JtHrOUgc1h5Mbq4rwdajIiQR1BwFN8h-Ai5LVR8Sv9KU/s808/%E0%A4%B5%E0%A4%BF%E0%A4%9C%E0%A4%AF%20%E0%A4%95%E0%A5%81%E0%A4%AE%E0%A4%BE%E0%A4%B0%20%E0%A4%AF%E0%A4%BE%E0%A4%A6%E0%A4%B5_20241230_125918_2.jpg" class="slide-link" target="_blank">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEginSJ4UspxjM15Zp5aJz11QwhFapPGdn1FUV3mZ6S7JFzA0FUwFUIWeGxNnJm_2YzDt445Vw_dPW4-yTcJZnPZSMpaI3FEz6XdWkSsarmhkAlZ2hdi5CCRv0r0DWwdDU9gVmJgEJoYFqfxV078uZ2YJWf6axOSGFPdCrgie2qnfPoVIGAjLlxY1j-bnPDm/s800/IMG-20250418-WA0023.jpg" alt="Ad 6">
+      </a>
+    </div>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+
+  <script>
+    let index = 0;
+    const slides = document.getElementById('slides');
+    const dotsContainer = document.getElementById('dots');
+    const totalSlides = slides.children.length;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let autoSlideInterval;
+
+    // Create dots for navigation
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => goToSlide(i));
+      dotsContainer.appendChild(dot);
+    }
+
+    // Initialize auto slide
+    startAutoSlide();
+
+    function goToSlide(slideIndex) {
+      index = slideIndex;
+      updateSlider();
+    }
+
+    function updateSlider() {
+      slides.style.transform = `translateX(-${index * 100}%)`;
+      
+      // Update active dot
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    function nextSlide() {
+      index = (index + 1) % totalSlides;
+      updateSlider();
+    }
+
+    function prevSlide() {
+      index = (index - 1 + totalSlides) % totalSlides;
+      updateSlider();
+    }
+
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextSlide, 2000);
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
+
+    // Touch event handlers for swipe
+    slides.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoSlide();
+    }, {passive: true});
+
+    slides.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      startAutoSlide();
+    }, {passive: true});
+
+    function handleSwipe() {
+      const threshold = 50; // Minimum swipe distance
+      if (touchEndX < touchStartX - threshold) {
+        // Swipe left - next slide
+        nextSlide();
+      } else if (touchEndX > touchStartX + threshold) {
+        // Swipe right - previous slide
+        prevSlide();
+      }
+    }
+
+    // Mouse event handlers for desktop
+    slides.addEventListener('mousedown', (e) => {
+      touchStartX = e.clientX;
+      stopAutoSlide();
+    });
+
+    slides.addEventListener('mouseup', (e) => {
+      touchEndX = e.clientX;
+      handleSwipe();
+      startAutoSlide();
+    });
+
+    slides.addEventListener('mouseleave', () => {
+      startAutoSlide();
+    });
+
+    function installApp() {
+      window.location.href = "https://yourappdownloadlink.com"; // यहाँ अपने App का लिंक लगाएं
+    }
+  </script>
+
+</body>
+</html>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
