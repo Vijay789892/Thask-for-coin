@@ -71,6 +71,26 @@
             animation: shine 3s infinite;
         }
 
+        .daily-info {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .daily-info h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .reset-timer {
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -365,6 +385,12 @@
             animation: coinFlip 0.6s ease-in-out;
         }
 
+        @keyframes coinFlip {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(360deg) scale(1); }
+        }
+
         @keyframes shake {
             0%, 100% {
                 transform: translateX(0);
@@ -375,6 +401,17 @@
             75% {
                 transform: translateX(5px);
             }
+        }
+
+        .new-day-banner {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
         }
 
         @media (max-width: 600px) {
@@ -511,7 +548,6 @@
     background: #44bd32;
 }
 
-
     </style>
 </head>
 <body>
@@ -519,12 +555,15 @@
         <h1>🎮 Daily Task Coin Game</h1>
         
         <div class="coin-counter" id="coinCounter">
-            Coins: <span id="coinCount">0</span>
+            Total Coins: <span id="coinCount">0</span>
+        </div>
+
+        <div class="daily-info">
+            <h3>📅 Today's Progress</h3>
+            <div class="reset-timer" id="resetTimer">Next reset in: --:--:--</div>
         </div>
         
         <div class="stats">
-
-
 
 <button class="rules-btn" onclick="showRules()">📜 खेलने के नियम</button>
 
@@ -630,15 +669,22 @@
                 <div class="stat-number" id="earnedToday">0</div>
                 <div class="stat-label">Coins Earned Today</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalEarned">0</div>
+                <div class="stat-label">Total Coins Earned</div>
+            </div>
+        </div>
+        
+        <div id="newDayBanner" class="new-day-banner" style="display: none;">
+            🎉 New Day Started! All tasks are now available again! 🎉
         </div>
         
         <div id="taskList"></div>
     </div>
 
     <script>
-        
         const tasks = [
-            { id: 1, title: "Visit Link 1", coins: 2, link: "https://example.com/1" },
+            { id: 1, title: "Visit Link 1", coins: 2, link: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s500/IMG-20250410-WA0005.jpg" },
             { id: 2, title: "Visit Link 2", coins: 3, link: "https://example.com/2" },
             { id: 3, title: "Visit Link 3", coins: 2, link: "https://example.com/3" },
             { id: 4, title: "Visit Link 4", coins: 3, link: "https://example.com/4" },
@@ -660,7 +706,7 @@
             { id: 20, title: "Visit Link 20", coins: 3, link: "https://example.com/20" }
         ];
 
-        // AdSense banner configurations - Replace with your actual AdSense details
+        // AdSense banner configurations
         const bannerAds = [
             { 
                 html: `<div class="ad-container">
@@ -672,7 +718,7 @@
                                data-full-width-responsive="true">
                           </ins>
                        </div>`,
-                link: "#",
+                link: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjudMFtNpRU_s0-aqCvyaki0E7pJdCt07ERv_9D5y2d8mkqwpfkb8PV-shiZevAx24nUz93ZFDErbz6tHnWUVtgV0TKraVHxFLR-U4sUnTdA64COFCWWLeCM9eQFihNzJvtfGJzzLZOxy9EFmoLYeaMXaTEjEQn8DaXHfn77pRwrtK_S_cWAIy1FuqjW7yo/s500/IMG-20250410-WA0005.jpg",
                 script: `
                     setTimeout(() => {
                         try {
@@ -1105,11 +1151,18 @@
 
         ];
 
-        // Game state variables
-        let totalCoins = 0;
-        let completedTasks = {};
-        let dailyEarnings = {};
+
+        // Game state variables - stored in memory for this session
+        let gameData = {
+            totalCoins: 0,
+            completedTasks: {},
+            dailyEarnings: {},
+            totalEarnings: 0,
+            lastResetDate: null
+        };
+        
         let taskTimers = {};
+        let resetTimerInterval = null;
 
         // DOM elements
         const coinDisplay = document.getElementById("coinCount");
@@ -1117,42 +1170,114 @@
         const taskList = document.getElementById("taskList");
         const completedTodayDisplay = document.getElementById("completedToday");
         const earnedTodayDisplay = document.getElementById("earnedToday");
+        const totalEarnedDisplay = document.getElementById("totalEarned");
+        const resetTimerDisplay = document.getElementById("resetTimer");
+        const newDayBanner = document.getElementById("newDayBanner");
+
+        // Date helper functions
+        function getTodayString() {
+            return new Date().toLocaleDateString('en-US');
+        }
+
+        function getNextMidnight() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            return tomorrow;
+        }
+
+        function formatTimeUntilReset() {
+            const now = new Date();
+            const midnight = getNextMidnight();
+            const diff = midnight - now;
+            
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Check if it's a new day and reset tasks
+        function checkForNewDay() {
+            const today = getTodayString();
+            
+            if (gameData.lastResetDate && gameData.lastResetDate !== today) {
+                // New day detected - show banner and reset tasks
+                newDayBanner.style.display = 'block';
+                setTimeout(() => {
+                    newDayBanner.style.display = 'none';
+                }, 5000);
+                
+                // Reset daily tasks but keep total coins
+                gameData.completedTasks = {};
+                showNotification("🌅 New day started! Tasks are now available again!");
+            }
+            
+            gameData.lastResetDate = today;
+        }
 
         // Initialize game
         function initGame() {
-            const today = new Date().toLocaleDateString();
-            totalCoins = 0;
-            completedTasks = {};
-            dailyEarnings = {};
+            checkForNewDay();
             updateDisplay();
             renderTasks();
+            startResetTimer();
+        }
+
+        function startResetTimer() {
+            if (resetTimerInterval) {
+                clearInterval(resetTimerInterval);
+            }
+            
+            resetTimerInterval = setInterval(() => {
+                resetTimerDisplay.textContent = `Next reset in: ${formatTimeUntilReset()}`;
+                
+                // Check if it's midnight (new day)
+                const now = new Date();
+                if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                    checkForNewDay();
+                    renderTasks(); // Re-render tasks for new day
+                }
+            }, 1000);
+            
+            // Initial display
+            resetTimerDisplay.textContent = `Next reset in: ${formatTimeUntilReset()}`;
         }
 
         function updateCoins(amount) {
-            totalCoins += amount;
-            coinDisplay.textContent = totalCoins;
+            gameData.totalCoins += amount;
+            gameData.totalEarnings += amount;
+            coinDisplay.textContent = gameData.totalCoins;
             coinCounter.classList.add('coin-animation');
             setTimeout(() => coinCounter.classList.remove('coin-animation'), 600);
 
-            const today = new Date().toLocaleDateString();
-            dailyEarnings[today] = (dailyEarnings[today] || 0) + amount;
+            const today = getTodayString();
+            gameData.dailyEarnings[today] = (gameData.dailyEarnings[today] || 0) + amount;
             updateDisplay();
             showNotification(`+${amount} coins earned! 🪙`);
         }
 
         function markTaskDone(id) {
-            const today = new Date().toLocaleDateString();
-            completedTasks[id] = today;
+            const today = getTodayString();
+            gameData.completedTasks[id] = today;
             updateDisplay();
         }
 
+        function isTaskCompletedToday(id) {
+            const today = getTodayString();
+            return gameData.completedTasks[id] === today;
+        }
+
         function updateDisplay() {
-            const today = new Date().toLocaleDateString();
-            const completedToday = Object.values(completedTasks).filter(date => date === today).length;
-            const earnedToday = dailyEarnings[today] || 0;
+            const today = getTodayString();
+            const completedToday = Object.values(gameData.completedTasks).filter(date => date === today).length;
+            const earnedToday = gameData.dailyEarnings[today] || 0;
 
             completedTodayDisplay.textContent = completedToday;
             earnedTodayDisplay.textContent = earnedToday;
+            totalEarnedDisplay.textContent = gameData.totalEarnings;
+            coinDisplay.textContent = gameData.totalCoins;
         }
 
         function showNotification(message) {
@@ -1169,12 +1294,18 @@
         }
 
         function renderTasks() {
-            const today = new Date().toLocaleDateString();
+            // Clear existing tasks
+            taskList.innerHTML = '';
 
             tasks.forEach((task, index) => {
                 const taskDiv = document.createElement("div");
                 taskDiv.className = "task";
                 taskDiv.style.animationDelay = `${index * 0.1}s`;
+
+                const taskCompleted = isTaskCompletedToday(task.id);
+                if (taskCompleted) {
+                    taskDiv.classList.add('completed');
+                }
 
                 const taskHeader = document.createElement("div");
                 taskHeader.className = "task-header";
@@ -1192,11 +1323,11 @@
 
                 // Create AdSense banner ad
                 const bannerAd = document.createElement("div");
-                bannerAd.innerHTML = bannerAds[index].html;
+                bannerAd.innerHTML = bannerAds[index % bannerAds.length].html;
 
                 // Load AdSense script for this ad
                 setTimeout(() => {
-                    eval(bannerAds[index].script);
+                    eval(bannerAds[index % bannerAds.length].script);
                 }, index * 200);
 
                 const btnContainer = document.createElement("div");
@@ -1218,18 +1349,18 @@
                 progressFill.className = "progress-fill";
                 progressBar.appendChild(progressFill);
 
-                const lastDone = completedTasks[task.id];
-                if (lastDone === today) {
-                    taskDiv.classList.add('completed');
+                if (taskCompleted) {
                     visitBtn.disabled = true;
-                    visitBtn.textContent = "✅ Completed";
+                    visitBtn.textContent = "✅ Completed Today";
                     confirmBtn.disabled = true;
-                    confirmBtn.textContent = "✅ Done";
+                    confirmBtn.textContent = "✅ Done Today";
                     confirmBtn.style.background = "#28a745";
                     progressFill.style.width = "100%";
                 }
 
                 visitBtn.onclick = () => {
+                    if (taskCompleted) return;
+                    
                     const newTab = window.open(task.link, "_blank");
                     startTime = Date.now();
                     visitBtn.disabled = true;
@@ -1273,6 +1404,8 @@
                 };
 
                 confirmBtn.onclick = () => {
+                    if (taskCompleted) return;
+                    
                     if (!startTime) {
                         showNotification("⚠️ Pehle 'Visit Link' button ko click kariye!");
                         confirmBtn.style.animation = "shake 0.5s ease-in-out";
@@ -1287,7 +1420,7 @@
                         markTaskDone(task.id);
                         taskDiv.classList.add('completed');
                         visitBtn.disabled = true;
-                        visitBtn.textContent = "✅ Completed";
+                        visitBtn.textContent = "✅ Completed Today";
                         confirmBtn.disabled = true;
                         confirmBtn.textContent = "✅ Coin Claimed";
                         confirmBtn.style.background = "#28a745";
@@ -1296,7 +1429,7 @@
                         if (taskTimers[task.id]) {
                             clearInterval(taskTimers[task.id]);
                         }
-                        showNotification(`🎉 Congratulations! +${task.coins} coins earned!`);
+                        showNotification(`🎉 Congratulations! +${task.coins} coins earned! Tomorrow you can earn again!`);
                     } else if (confirmBtn.disabled) {
                         const remaining = Math.ceil(5 - diff);
                         showNotification(`⏰ Abhi ${remaining} second aur rukiye ads mein! Timer: ${Math.floor(diff)}s/5s`);
@@ -1324,6 +1457,18 @@
         // Initialize the game
         initGame();
 
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (resetTimerInterval) {
+                clearInterval(resetTimerInterval);
+            }
+            Object.values(taskTimers).forEach(timer => clearInterval(timer));
+        });
+
+
+ // Initialize the game
+        initGame();
+
 function showRules() {
     const dialog = document.getElementById('gameRulesDialog');
     dialog.showModal();
@@ -1333,9 +1478,15 @@ function closeRules() {
     const dialog = document.getElementById('gameRulesDialog');
     dialog.close();
 }
+
     </script>
 </body>
 </html>
+
+
+<iframe src="https://wowzy-baf.onelink.me/seV8/h9kgoifq?refId=200717051&refCode=FORCLLHA&baf_promo_code=BAF_BONUS_WOWZY&cid=6003&utm_medium=baf_whatsapp" width="350" height="250" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+
 
 
 
