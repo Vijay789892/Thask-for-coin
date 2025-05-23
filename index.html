@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Task Coin Game</title>
+    <!-- AdSense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxx"
+            crossorigin="anonymous"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .coin-counter {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coin-counter::before {
+            content: '🪙';
+            font-size: 32px;
+            margin-right: 10px;
+        }
+
+        .coin-counter::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .task {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .task:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .task.completed {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: rgba(40, 167, 69, 0.3);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .task-coins {
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .task-coins::before {
+            content: '🪙';
+        }
+
+        /* AdSense Banner Styles */
+        .ad-container {
+            width: 100%;
+            min-height: 90px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .ad-container:hover {
+            transform: scale(1.01);
+            border-color: #667eea;
+        }
+
+        .ad-placeholder {
+            color: #6c757d;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .ad-container .adsbygoogle {
+            width: 100%;
+            height: 90px;
+            border-radius: 10px;
+        }
+
+        .btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 120px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .visit-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .visit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .confirm-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        button:disabled {
+            background: #aaa !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .timer {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0.7;
+            }
+        }
+
+        .instruction-message {
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .coin-animation {
+            animation: coinFlip 0.6s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .btns {
+                flex-direction: column;
+            }
+            button {
+                min-width: 100%;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .coin-counter {
+                font-size: 24px;
+            }
+            .ad-container {
+                min-height: 70px;
+            }
+        }
+
+.rules-btn {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+    transition: transform 0.3s ease;
+}
+
+.rules-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+}
+
+.rules-dialog {
+    border: none;
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 600px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 0 0 40px rgba(0,0,0,0.2);
+}
+
+.dialog-content {
+    position: relative;
+    padding: 20px;
+}
+
+.dialog-content h3 {
+    color: #2d3436;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.rule-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.rule-card.warning {
+    background: linear-gradient(45deg, #fff9db, #ffe3e3);
+    border-color: #ff8787;
+}
+
+.rule-icon {
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.rule-card h4 {
+    color: #2d3436;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.rule-card ul {
+    padding-left: 20px;
+    color: #555;
+}
+
+.rule-card li {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.progress-info {
+    margin: 25px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4cd137, #44bd32);
+    border-radius: 5px;
+}
+
+.close-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #4cd137;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+    background: #44bd32;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Daily Task Coin Game</h1>
+        
+        <div class="coin-counter" id="coinCounter">
+            Coins: <span id="coinCount">0</span>
+        </div>
+        
+        <div class="stats">
+
+
+
+<button class="rules-btn" onclick="showRules()">📜 खेलने के नियम</button>
+
+<dialog id="gameRulesDialog" class="rules-dialog">
+    <div class="dialog-content">
+        <h3>🪙 दैनिक कार्य सिक्का खेल - नियम</h3>
+        
+        <div class="rules-section">
+            <div class="rule-card">
+                <div class="rule-icon">🎯</div>
+                <h4>कैसे खेलें?</h4>
+                <ul>
+                    <li>1. **टास्क चुनें:** हर दिन 20 नए टास्क मिलेंगे, हर टास्क पर "🔗 Visit Link" बटन दबाएं  </li>
+                    <li>2. **Ads देखें:** नई विंडो में खुले ads/लिंक को **कम से कम 5 सेकंड** तक खुला रखें  </li>
+                    <li>3.विज्ञापन को <strong>कम से कम 5 सेकंड</strong> तक देखें</li>
+                     <li>4.**कन्फर्म करें:** Ads देखने के बाद "Main aa gaya hoon" बटन दबाकर सिक्के क्लेम करें</li>
+                      <li>5.. **सिक्के जमा करें:** हर पूरा टास्क करने पर 2-3 सिक्के मिलते हैं</li>
+                     <li>"मैं आ गया हूँ" बटन दबाकर सिक्के क्लेम करें</li>
+                </ul>
+            </div>
+
+            <div class="rule-card warning">
+                <div class="rule-icon">⚠️</div>
+                <h4>महत्वपूर्ण नियम</h4>
+                <ul>
+     <li>- हर टास्क सिर्फ **1 बार/दिन** कर सकते हैं</li>
+     <li>- Ads को 5 सेकंड से पहले बंद करने पर सिक्के नहीं मिलेंगे</li>
+     <li>- "Main aa gaya hoon" बटन केवल Ads देखने के बाद ही सक्रिय होगा</li>
+                    <li>प्रत्येक कार्य दिन में केवल 1 बार कर सकते हैं</li>
+                    <li>5 सेकंड से पहले बंद करने पर सिक्के नहीं मिलेंगे</li>
+                    <li>गलत तरीके से क्लेम करने पर अकाउंट ब्लॉक हो सकता है</li>
+                    
+                </ul>
+            </div>
+            
+       <div class="rule-card warning">
+                <div class="rule-icon"> 🎮 </div>
+                <h4>खास फीचर्स</h4>
+                <ul>
+     <li>- प्रोग्रेस बार से देखें कितना समय बाकी है</li>
+     <li>- हर दिन नए टास्क रीसेट होते हैं</li>
+     <li>- ज्यादा सिक्के कमाने पर अचीवमेंट मिलते हैं</li>
+               प्रत्येक कार्य दिन में केवल 1 बार कर सकते हैं</li>
+                    <li>5 सेकंड से पहले बंद करने पर सिक्के नहीं मिलेंगे</li>
+                    <li>गलत तरीके से क्लेम करने पर अकाउंट ब्लॉक हो सकता है</li>
+                    
+                </ul>
+            </div>
+
+
+            <div class="rule-card">
+                <div class="rule-icon">💎</div>
+                <h4>सिक्के कमाने के टिप्स</h4>
+                <ul>
+                
+     <li>- सिक्के क्लेम करने में जल्दबाजी न करें</li>
+     <li>- Ads पूरा देखने पर ही सिक्के मिलेंगे</li>
+     <li>- हर दिन सभी टास्क करके अधिकतम 50+ सिक्के कमाएं</li>
+                    <li>हर सही कार्य पर 2-3 सिक्के मिलते हैं</li>
+                    <li>दैनिक लक्ष्य पूरा करने पर बोनस सिक्के</li>
+                    <li>लगातार 7 दिन खेलने पर 2x सिक्के</li>
+                </ul>
+            </div>
+
+            <div class="progress-info">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                </div>
+         <p>उदाहरण: 14/20 कार्य पूरे (70% प्रगति)</p>
+
+  <div class="rule-card">
+                <div class="rule-icon">🦕</div>
+                <h5>डायनासोर Real Dily 🪙 Coin Wallet</h5>
+                <ul>
+                
+        </ul>
+            </div>
+
+
+                   <h3> 🚀 अब खेल शुरू करें और सिक्के जीतें!</h3>
+                
+            </div>
+        </div>
+
+        <button class="close-btn" onclick="closeRules()">✖️ समझ गया</button>
+    </div>
+</dialog>
+
+
+
+
+
+
+            <div class="stat-card">
+                <div class="stat-number" id="completedToday">0</div>
+                <div class="stat-label">Completed Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">20</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="earnedToday">0</div>
+                <div class="stat-label">Coins Earned Today</div>
+            </div>
+        </div>
+        
+        <div id="taskList"></div>
+    </div>
+
+    <script>
+        
+        const tasks = [
+            { id: 1, title: "Visit Link 1", coins: 2, link: "https://example.com/1" },
+            { id: 2, title: "Visit Link 2", coins: 3, link: "https://example.com/2" },
+            { id: 3, title: "Visit Link 3", coins: 2, link: "https://example.com/3" },
+            { id: 4, title: "Visit Link 4", coins: 3, link: "https://example.com/4" },
+            { id: 5, title: "Visit Link 5", coins: 2, link: "https://example.com/5" },
+            { id: 6, title: "Visit Link 6", coins: 3, link: "https://example.com/6" },
+            { id: 7, title: "Visit Link 7", coins: 2, link: "https://example.com/7" },
+            { id: 8, title: "Visit Link 8", coins: 3, link: "https://example.com/8" },
+            { id: 9, title: "Visit Link 9", coins: 2, link: "https://example.com/9" },
+            { id: 10, title: "Visit Link 10", coins: 3, link: "https://example.com/10" },
+            { id: 11, title: "Visit Link 11", coins: 2, link: "https://example.com/11" },
+            { id: 12, title: "Visit Link 12", coins: 3, link: "https://example.com/12" },
+            { id: 13, title: "Visit Link 13", coins: 2, link: "https://example.com/13" },
+            { id: 14, title: "Visit Link 14", coins: 3, link: "https://example.com/14" },
+            { id: 15, title: "Visit Link 15", coins: 2, link: "https://example.com/15" },
+            { id: 16, title: "Visit Link 16", coins: 3, link: "https://example.com/16" },
+            { id: 17, title: "Visit Link 17", coins: 2, link: "https://example.com/17" },
+            { id: 18, title: "Visit Link 18", coins: 3, link: "https://example.com/18" },
+            { id: 19, title: "Visit Link 19", coins: 2, link: "https://example.com/19" },
+            { id: 20, title: "Visit Link 20", coins: 3, link: "https://example.com/20" }
+        ];
+
+        // AdSense banner configurations - Replace with your actual AdSense details
+        const bannerAds = [
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="1111111111"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 1 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 1:', e);
+                        }
+                    }, 500);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="2222222222"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 2 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 2:', e);
+                        }
+                    }, 700);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="3333333333"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 3 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 3:', e);
+                        }
+                    }, 900);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="4444444444"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 4 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 4:', e);
+                        }
+                    }, 1100);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="5555555555"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 5 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 5:', e);
+                        }
+                    }, 1300);
+                `
+            }, 
+     { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="1111111111"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 1 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 1:', e);
+                        }
+                    }, 500);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="2222222222"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 2 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 2:', e);
+                        }
+                    }, 700);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="3333333333"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 3 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 3:', e);
+                        }
+                    }, 900);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="4444444444"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 4 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 4:', e);
+                        }
+                    }, 1100);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="5555555555"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 5 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 5:', e);
+                        }
+                    }, 1300);
+                `
+            }, 
+  { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="1111111111"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 1 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 1:', e);
+                        }
+                    }, 500);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="2222222222"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 2 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 2:', e);
+                        }
+                    }, 700);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="3333333333"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 3 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 3:', e);
+                        }
+                    }, 900);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="4444444444"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 4 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 4:', e);
+                        }
+                    }, 1100);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="5555555555"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 5 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 5:', e);
+                        }
+                    }, 1300);
+                `
+            }, 
+     { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="1111111111"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 1 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 1:', e);
+                        }
+                    }, 500);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="2222222222"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 2 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 2:', e);
+                        }
+                    }, 700);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="3333333333"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 3 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 3:', e);
+                        }
+                    }, 900);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="4444444444"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 4 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 4:', e);
+                        }
+                    }, 1100);
+                `
+            },
+            { 
+                html: `<div class="ad-container">
+                          <ins class="adsbygoogle"
+                               style="display:block;width:100%;height:90px;"
+                               data-ad-client="ca-pub-xxxxxxxxxx"
+                               data-ad-slot="5555555555"
+                               data-ad-format="rectangle"
+                               data-full-width-responsive="true">
+                          </ins>
+                       </div>`,
+                link: "#",
+                script: `
+                    setTimeout(() => {
+                        try {
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                            console.log('AdSense Ad 5 loaded');
+                        } catch(e) {
+                            console.log('AdSense loading failed for Ad 5:', e);
+                        }
+                    }, 1300);
+                `
+            }
+
+        ];
+
+        // Game state variables
+        let totalCoins = 0;
+        let completedTasks = {};
+        let dailyEarnings = {};
+        let taskTimers = {};
+
+        // DOM elements
+        const coinDisplay = document.getElementById("coinCount");
+        const coinCounter = document.getElementById("coinCounter");
+        const taskList = document.getElementById("taskList");
+        const completedTodayDisplay = document.getElementById("completedToday");
+        const earnedTodayDisplay = document.getElementById("earnedToday");
+
+        // Initialize game
+        function initGame() {
+            const today = new Date().toLocaleDateString();
+            totalCoins = 0;
+            completedTasks = {};
+            dailyEarnings = {};
+            updateDisplay();
+            renderTasks();
+        }
+
+        function updateCoins(amount) {
+            totalCoins += amount;
+            coinDisplay.textContent = totalCoins;
+            coinCounter.classList.add('coin-animation');
+            setTimeout(() => coinCounter.classList.remove('coin-animation'), 600);
+
+            const today = new Date().toLocaleDateString();
+            dailyEarnings[today] = (dailyEarnings[today] || 0) + amount;
+            updateDisplay();
+            showNotification(`+${amount} coins earned! 🪙`);
+        }
+
+        function markTaskDone(id) {
+            const today = new Date().toLocaleDateString();
+            completedTasks[id] = today;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const today = new Date().toLocaleDateString();
+            const completedToday = Object.values(completedTasks).filter(date => date === today).length;
+            const earnedToday = dailyEarnings[today] || 0;
+
+            completedTodayDisplay.textContent = completedToday;
+            earnedTodayDisplay.textContent = earnedToday;
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        function renderTasks() {
+            const today = new Date().toLocaleDateString();
+
+            tasks.forEach((task, index) => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task";
+                taskDiv.style.animationDelay = `${index * 0.1}s`;
+
+                const taskHeader = document.createElement("div");
+                taskHeader.className = "task-header";
+
+                const title = document.createElement("div");
+                title.className = "task-title";
+                title.textContent = task.title;
+
+                const coinBadge = document.createElement("div");
+                coinBadge.className = "task-coins";
+                coinBadge.textContent = `+${task.coins}`;
+
+                taskHeader.appendChild(title);
+                taskHeader.appendChild(coinBadge);
+
+                // Create AdSense banner ad
+                const bannerAd = document.createElement("div");
+                bannerAd.innerHTML = bannerAds[index].html;
+
+                // Load AdSense script for this ad
+                setTimeout(() => {
+                    eval(bannerAds[index].script);
+                }, index * 200);
+
+                const btnContainer = document.createElement("div");
+                btnContainer.className = "btns";
+
+                const visitBtn = document.createElement("button");
+                visitBtn.className = "visit-btn";
+                visitBtn.textContent = "🔗 Visit Link";
+                let startTime = null;
+
+                const confirmBtn = document.createElement("button");
+                confirmBtn.className = "confirm-btn";
+                confirmBtn.textContent = "Main aa gaya hoon";
+                confirmBtn.disabled = true;
+
+                const progressBar = document.createElement("div");
+                progressBar.className = "progress-bar";
+                const progressFill = document.createElement("div");
+                progressFill.className = "progress-fill";
+                progressBar.appendChild(progressFill);
+
+                const lastDone = completedTasks[task.id];
+                if (lastDone === today) {
+                    taskDiv.classList.add('completed');
+                    visitBtn.disabled = true;
+                    visitBtn.textContent = "✅ Completed";
+                    confirmBtn.disabled = true;
+                    confirmBtn.textContent = "✅ Done";
+                    confirmBtn.style.background = "#28a745";
+                    progressFill.style.width = "100%";
+                }
+
+                visitBtn.onclick = () => {
+                    const newTab = window.open(task.link, "_blank");
+                    startTime = Date.now();
+                    visitBtn.disabled = true;
+                    visitBtn.textContent = "🔗 Ads Opened - Wait 5s";
+
+                    const instruction = document.createElement("div");
+                    instruction.className = "instruction-message";
+                    instruction.innerHTML = `
+                        <div style="background: linear-gradient(45deg, #ff6b6b, #feca57); color: white; padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; font-weight: bold; animation: pulse 1.5s infinite;">
+                            📢 Ads page mein 5 second tak rukiye, phir yahan wapas aakar "Main aa gaya hoon" dabayiye
+                        </div>
+                    `;
+                    btnContainer.insertBefore(instruction, btnContainer.firstChild);
+
+                    confirmBtn.disabled = true;
+                    confirmBtn.style.background = "#aaa";
+                    confirmBtn.textContent = "Wait... Ads mein rukiye";
+
+                    let timeLeft = 5;
+                    const countdownTimer = setInterval(() => {
+                        timeLeft--;
+                        confirmBtn.textContent = `Ads mein rukiye (${timeLeft}s)`;
+                        progressFill.style.width = `${((5 - timeLeft) / 5) * 100}%`;
+
+                        if (timeLeft <= 0) {
+                            clearInterval(countdownTimer);
+                            confirmBtn.textContent = "Main aa gaya hoon ✅";
+                            confirmBtn.disabled = false;
+                            confirmBtn.style.background = "linear-gradient(45deg, #28a745, #1e7e34)";
+                            progressFill.style.width = "100%";
+                            confirmBtn.style.animation = "blink 1s infinite";
+
+                            if (instruction.parentNode) {
+                                instruction.remove();
+                            }
+                            showNotification("✅ Ab aap coin claim kar sakte hain!");
+                        }
+                    }, 1000);
+
+                    taskTimers[task.id] = countdownTimer;
+                };
+
+                confirmBtn.onclick = () => {
+                    if (!startTime) {
+                        showNotification("⚠️ Pehle 'Visit Link' button ko click kariye!");
+                        confirmBtn.style.animation = "shake 0.5s ease-in-out";
+                        setTimeout(() => confirmBtn.style.animation = "", 500);
+                        return;
+                    }
+
+                    const diff = (Date.now() - startTime) / 1000;
+
+                    if (!confirmBtn.disabled && diff >= 5) {
+                        updateCoins(task.coins);
+                        markTaskDone(task.id);
+                        taskDiv.classList.add('completed');
+                        visitBtn.disabled = true;
+                        visitBtn.textContent = "✅ Completed";
+                        confirmBtn.disabled = true;
+                        confirmBtn.textContent = "✅ Coin Claimed";
+                        confirmBtn.style.background = "#28a745";
+                        confirmBtn.style.animation = "none";
+
+                        if (taskTimers[task.id]) {
+                            clearInterval(taskTimers[task.id]);
+                        }
+                        showNotification(`🎉 Congratulations! +${task.coins} coins earned!`);
+                    } else if (confirmBtn.disabled) {
+                        const remaining = Math.ceil(5 - diff);
+                        showNotification(`⏰ Abhi ${remaining} second aur rukiye ads mein! Timer: ${Math.floor(diff)}s/5s`);
+                        confirmBtn.style.animation = "shake 0.5s ease-in-out";
+                        setTimeout(() => confirmBtn.style.animation = "", 500);
+                    } else if (diff < 5) {
+                        const remaining = Math.ceil(5 - diff);
+                        showNotification(`⚠️ Jaldi wapas aa gaye! ${remaining} second aur ads mein rukiye. Current: ${Math.floor(diff)}s/5s`);
+                        confirmBtn.style.animation = "shake 0.5s ease-in-out";
+                        setTimeout(() => confirmBtn.style.animation = "", 500);
+                    }
+                };
+
+                btnContainer.appendChild(visitBtn);
+                btnContainer.appendChild(confirmBtn);
+
+                taskDiv.appendChild(taskHeader);
+                taskDiv.appendChild(bannerAd);
+                taskDiv.appendChild(btnContainer);
+                taskDiv.appendChild(progressBar);
+                taskList.appendChild(taskDiv);
+            });
+        }
+
+        // Initialize the game
+        initGame();
+
+function showRules() {
+    const dialog = document.getElementById('gameRulesDialog');
+    dialog.showModal();
+}
+
+function closeRules() {
+    const dialog = document.getElementById('gameRulesDialog');
+    dialog.close();
+}
+    </script>
+</body>
+</html>
+
+
+
+     
+<button onclick="myDialog.showModal()">Your task completed</button>
+
+<dialog id="myDialog">
+  <p>✔️Your task completed. अब आप और खेले नया!
+</p>
+  <button onclick="myDialog.close()">✖️</button>
+</dialog>
